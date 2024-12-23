@@ -1,44 +1,39 @@
 import { createContext, useState } from "react";
+import {useDisclosure} from "@chakra-ui/react";
 
 export const GlobalContext = createContext(null);
 
 export default function GlobalState({ children }) {
-  const [formData, setFormData] = useState({
-    type: "income",
-    amount: 0,
-    description: "",
-  });
+    const { isOpen, onOpen, onClose } = useDisclosure();
 
-  const [value, setValue] = useState("expense");
   const [totalExpense, setTotalExpense] = useState(0);
   const [totalIncome, setTotalIncome] = useState(0);
-  const [allTransactions, setAllTransactions] = useState([]);
+  const [incomeTransactions, setIncomeTransactions] = useState([]);
+  const [expenseTransactions, setExpenseTransactions] = useState([]);
 
-  function handleFormSubmit(currentFormData) {
-    if (!currentFormData.description || !currentFormData.amount) return;
-
-    setAllTransactions([
-      ...allTransactions,
-      { ...currentFormData, id: Date.now() },
-    ]);
+  function handleFormSubmit(formData) {
+      console.log('formData', formData);
+      let type = formData.type;
+      if (type === "income") {
+          setTotalIncome(totalIncome + parseInt(formData.amount));
+          setIncomeTransactions((array) => [...array, { ...formData, id: Date.now() }]);
+      } else {
+          setTotalExpense(totalExpense + parseInt(formData.amount));
+          setExpenseTransactions((array) => [...array, { ...formData, id: Date.now() }]);
+      }
   }
-
-  console.log(allTransactions);
 
   return (
     <GlobalContext.Provider
       value={{
-        formData,
-        setFormData,
         totalExpense,
-        setTotalExpense,
         totalIncome,
-        setTotalIncome,
-        value,
-        setValue,
-        allTransactions,
-        setAllTransactions,
         handleFormSubmit,
+          isOpen,
+          onOpen,
+          onClose,
+          incomeTransactions,
+          expenseTransactions
       }}
     >
       {children}

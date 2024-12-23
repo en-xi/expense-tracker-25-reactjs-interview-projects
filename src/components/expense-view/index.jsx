@@ -1,6 +1,9 @@
 import { Box, Flex, Heading, Text } from "@chakra-ui/react";
+import {useContext} from "react";
+import {GlobalContext} from "../../context";
 
 export default function ExpenseView({ type, data }) {
+
   return (
     <Box
       flex={1}
@@ -22,6 +25,7 @@ export default function ExpenseView({ type, data }) {
       {data.map((item) => (
         <>
           <Flex
+              id={item.id}
             bg={type === "expense" ? "red.50" : "blue.50"}
             mt={"4"}
             justifyContent={"space-between"}

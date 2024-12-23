@@ -13,24 +13,36 @@ import {
   Radio,
   RadioGroup,
 } from "@chakra-ui/react";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { GlobalContext } from "../../context";
 
-export default function TransactionForm({ onClose, isOpen }) {
-  const { formData, setFormData, value, setValue, handleFormSubmit } =
-    useContext(GlobalContext);
-
-  function handleFormChange(event) {
-    setFormData({
-      ...formData,
-      [event.target.name]: event.target.value,
-    });
-  }
+export default function TransactionForm() {
+  const { handleFormSubmit, onClose, isOpen } = useContext(GlobalContext);
+  const [type, setType] = useState('');
+  const [amount, setAmount] = useState('');
+  const [description, setDescription] = useState("");
 
   function handleSubmit(event) {
     event.preventDefault();
-    handleFormSubmit(formData);
+
+    if (!type || !amount || !description) {
+      alert("Please enter value to each parameter!");
+      return;
+    }
+
+    handleFormSubmit({
+      type: type,
+      amount: amount,
+      description: description
+    });
+
+    setType('')
+    setAmount('')
+    setDescription('')
+
+    onClose();
   }
+
 
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
@@ -46,7 +58,7 @@ export default function TransactionForm({ onClose, isOpen }) {
                 placeholder="Enter Transaction description"
                 name="description"
                 type="text"
-                onChange={handleFormChange}
+                onChange={(e) => setDescription(e.target.value)}
               />
             </FormControl>
             <FormControl>
@@ -55,25 +67,25 @@ export default function TransactionForm({ onClose, isOpen }) {
                 placeholder="Enter Transaction amount"
                 name="amount"
                 type="number"
-                onChange={handleFormChange}
+                onChange={(e) => setAmount(e.target.value)}
               />
             </FormControl>
-            <RadioGroup mt="5" value={value} onChange={setValue}>
+            <RadioGroup mt="5">
               <Radio
-                checked={formData.type === "income"}
+                checked={type === "income"}
                 value="income"
                 colorScheme="blue"
                 name="type"
-                onChange={handleFormChange}
+                onChange={(e) => setType(e.target.value)}
               >
                 Income
               </Radio>
               <Radio
-                checked={formData.type === "expense"}
+                checked={type === "expense"}
                 value="expense"
                 colorScheme="red"
                 name="type"
-                onChange={handleFormChange}
+                onChange={(e) => setType(e.target.value)}
               >
                 Expense
               </Radio>
@@ -83,7 +95,7 @@ export default function TransactionForm({ onClose, isOpen }) {
             <Button mr={"4"} onClick={onClose}>
               Cancel
             </Button>
-            <Button onClick={onClose} type="submit">
+            <Button type="submit">
               Add
             </Button>
           </ModalFooter>

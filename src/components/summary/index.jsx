@@ -1,13 +1,12 @@
 import { Box, Flex, Heading, Text } from "@chakra-ui/react";
 import TransactionForm from "../add-transaction";
 import TransactionChartSummary from "../chart";
+import {useContext} from "react";
+import {GlobalContext} from "../../context";
 
 export default function Summary({
-  onClose,
-  isOpen,
-  totalExpense,
-  totalIncome,
 }) {
+  const {totalExpense, totalIncome} = useContext(GlobalContext);
   return (
     <Box
       p="6"
@@ -87,7 +86,7 @@ export default function Summary({
           </Heading>
         </Box>
       </Flex>
-      <TransactionForm onClose={onClose} isOpen={isOpen} />
+      <TransactionForm />
     </Box>
   );
 }

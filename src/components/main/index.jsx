@@ -1,32 +1,11 @@
-import { Button, Flex, Heading, useDisclosure } from "@chakra-ui/react";
+import { Button, Flex, Heading } from "@chakra-ui/react";
 import Summary from "../summary";
 import ExpenseView from "../expense-view";
-import { useContext, useEffect } from "react";
+import { useContext } from "react";
 import { GlobalContext } from "../../context";
 
 export default function Main() {
-  const { isOpen, onOpen, onClose } = useDisclosure();
-  const {
-    totalExpense,
-    allTransactions,
-    setTotalExpense,
-    totalIncome,
-    setTotalIncome,
-  } = useContext(GlobalContext);
-
-  useEffect(() => {
-    let income = 0;
-    let expense = 0;
-
-    allTransactions.forEach((item) => {
-      item.type === "income"
-        ? (income = income + parseFloat(item.amount))
-        : (expense = expense + parseFloat(item.amount));
-    });
-
-    setTotalExpense(expense);
-    setTotalIncome(income);
-  }, [allTransactions]);
+  const { onOpen, incomeTransactions, expenseTransactions } = useContext(GlobalContext);
 
   return (
     <Flex textAlign={"center"} flexDirection={"column"} pr={"5"} pl={"5"}>
@@ -43,12 +22,7 @@ export default function Main() {
           </Button>
         </Flex>
       </Flex>
-      <Summary
-        totalExpense={totalExpense}
-        totalIncome={totalIncome}
-        isOpen={isOpen}
-        onClose={onClose}
-      />
+      <Summary />
 
       <Flex
         w="full"
@@ -56,14 +30,8 @@ export default function Main() {
         justifyContent={"space-evenly"}
         flexDirection={["column", "column", "column", "row", "row"]}
       >
-        <ExpenseView
-          data={allTransactions.filter((item) => item.type === "expense")}
-          type={"expense"}
-        />
-        <ExpenseView
-          data={allTransactions.filter((item) => item.type === "income")}
-          type={"income"}
-        />
+        <ExpenseView type={"expense"} data={expenseTransactions} />
+        <ExpenseView type={"income"} data={incomeTransactions} />
       </Flex>
     </Flex>
   );
